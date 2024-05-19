@@ -1,0 +1,109 @@
+---
+title: "2023 Exp#2 - Quantity Info Use Notebook (May 19, 2024)"
+author: "Brandi Christiano"
+output: html_notebook
+editor_options: 
+  chunk_output_type: console
+---
+```{r}
+# Updated : May 19, 2024
+
+# This notebook goes through my Summer 2023 Experiment #2 (Consensus of Social Information)
+```
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(lmerTest)
+library(lme4)
+library(binom)
+```
+
+```{r}
+# on November 17, 2023 , I met with Logan (see Zoom recording) and we decided to break the data up
+# First part is now a binomial test with only the minority and actor bats bc they were the ones that had 1 partner v 3 partner choices
+```
+
+
+```{r}
+setwd("C:/Users/15707/Desktop/Research/Manuscripts/Social Learning Paper")
+bat <- read.csv("Actor and Minority Dataset.csv")
+bat
+```
+
+```{r}
+data_cleaned <- na.omit(bat)
+data_cleaned
+
+success<-sum(data_cleaned$Binary)
+success
+result<-binom.test(success, length(data_cleaned$Binary), p=0.5, alternative = "less")
+result
+```
+
+```{r}
+successes_condition1 <- 11
+trials_condition1 <- 14
+
+successes_condition2 <- 3
+trials_condition2 <- 14
+
+# Calculate exact binomial confidence intervals
+ci_condition1 <- binom.test(successes_condition1, trials_condition1)$conf.int
+ci_condition2 <- binom.test(successes_condition2, trials_condition2)$conf.int
+
+# Print confidence intervals
+print(ci_condition1)
+print(ci_condition2)
+```
+
+```{r} 
+# April 4th, 2024 update
+
+# Not new but relevant
+setwd("C:/Users/15707/Desktop/Research/Manuscripts/Social Learning Paper")
+bat <- read.csv("Actor and Minority Dataset.csv")
+bat
+data_cleaned <- na.omit(bat)
+data_cleaned
+success<-sum(data_cleaned$Binary)
+success
+result<-binom.test(success, length(data_cleaned$Binary), p=0.5, alternative = "less")
+result
+
+# New
+
+# Filter by sex
+male_data <- data_cleaned %>%
+  filter(Sex == "M")
+
+female_data <- data_cleaned %>%
+  filter(Sex == "F")
+
+# Compare min v maj BY each sex
+successM<-sum(male_data$Binary)
+successM
+resultM<-binom.test(successM, length(male_data$Binary), p=0.5, alternative = "less")
+resultM # p = 0.04
+
+successF<-sum(female_data$Binary)
+successF
+resultF<-binom.test(successF, length(female_data$Binary), p=0.5, alternative = "less")
+resultF # P = 1
+
+
+
+# I want to make a big model
+
+library(lme4)
+model1 <- glmer(Sex ~ Binary  + (1|Bat_Name), data = bat, family = binomial)
+summary(model1) 
+anova(model1)
+
+# End of April 4 update
+```
+
+
+
+
+
