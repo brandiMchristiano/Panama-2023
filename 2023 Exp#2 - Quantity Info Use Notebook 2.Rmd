@@ -1,0 +1,213 @@
+---
+title: "2023 Exp#2 - Quantity Info Use Notebook 2"
+author: "Brandi Christiano"
+output: html_notebook
+editor_options: 
+  chunk_output_type: console
+---
+```{r}
+# Updated : April 4, 2024 (see line 61)
+
+# This notebook goes through my Summer 2023 Experiment #2 (Consensus of Social Information)
+```
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(lmerTest)
+library(lme4)
+library(binom)
+```
+
+```{r}
+# on November 17, 2023 , I met with Logan (see Zoom recording) and we decided to break the data up
+# First part is now a binomial test with only the minority and actor bats bc they were the ones that had 1 partner v 3 partner choices
+```
+
+
+```{r}
+setwd("C:/Users/15707/Desktop/Research/Manuscripts/Social Learning Paper")
+bat <- read.csv("Actor and Minority Dataset.csv")
+bat
+```
+
+```{r}
+data_cleaned <- na.omit(bat)
+data_cleaned
+
+success<-sum(data_cleaned$Binary)
+success
+result<-binom.test(success, length(data_cleaned$Binary), p=0.5, alternative = "less")
+result
+```
+
+```{r}
+successes_condition1 <- 11
+trials_condition1 <- 14
+
+successes_condition2 <- 3
+trials_condition2 <- 14
+
+# Calculate exact binomial confidence intervals
+ci_condition1 <- binom.test(successes_condition1, trials_condition1)$conf.int
+ci_condition2 <- binom.test(successes_condition2, trials_condition2)$conf.int
+
+# Print confidence intervals
+print(ci_condition1)
+print(ci_condition2)
+```
+
+```{r} 
+# April 4th, 2024 update
+
+# Not new but relevant
+setwd("C:/Users/15707/Desktop/Research/Manuscripts/Social Learning Paper")
+bat <- read.csv("Actor and Minority Dataset.csv")
+bat
+data_cleaned <- na.omit(bat)
+data_cleaned
+success<-sum(data_cleaned$Binary)
+success
+result<-binom.test(success, length(data_cleaned$Binary), p=0.5, alternative = "less")
+result
+
+# New
+
+# Filter by sex
+male_data <- data_cleaned %>%
+  filter(Sex == "M")
+
+female_data <- data_cleaned %>%
+  filter(Sex == "F")
+
+# Compare min v maj BY each sex
+successM<-sum(male_data$Binary)
+successM
+resultM<-binom.test(successM, length(male_data$Binary), p=0.5, alternative = "less")
+resultM # p = 0.04
+
+successF<-sum(female_data$Binary)
+successF
+resultF<-binom.test(successF, length(female_data$Binary), p=0.5, alternative = "less")
+resultF # P = 1
+
+
+
+# I want to make a big model
+
+library(lme4)
+model1 <- glmer(Sex ~ Binary  + (1|Bat_Name), data = bat, family = binomial)
+summary(model1) 
+anova(model1)
+
+# End of April 4 update
+```
+
+
+```{r}
+# Then I wanted to build a model to see if success (bat chose majority social flavor) was based on sex or role for that night ... this is instead of looking at how # of partners influences success since they are kind of one in the same
+```
+
+```{r}
+setwd("C:/Users/15707/Desktop/Research/Manuscripts/Social Learning Paper")
+bat2 <- read.csv("Minority Majority dataset.csv")
+bat2
+```
+
+```{r}
+library(lme4)
+model1 <- glmer(Success ~ Role + Sex  + (1|Bat_Name), data = bat2, family = binomial)
+summary(model1) # Sex is significant
+anova(model1)
+```
+
+```{r}
+library(dplyr)
+# Filter data by sex 
+male_data <- bat2 %>%
+  filter(Sex == "M")
+
+average_successM <- male_data %>%
+  group_by(Bat_Name) %>%
+  summarise(Average_Success = mean(Success))
+
+average_successM
+
+Maverage <- mean(average_successM$Average_Success, na.rm=TRUE)
+
+Maverage
+
+female_data <- bat2 %>%
+  filter(Sex == "F")
+
+average_successF <- female_data %>%
+  group_by(Bat_Name) %>%
+  summarise(Average_Success = mean(Success))
+
+average_successF
+
+Faverage <- mean(average_successF$Average_Success, na.rm=TRUE)
+
+Faverage
+
+# Performing a two-sample t-test
+t_test_result <- t.test(average_successM$Average_Success, average_successF$Average_Success)
+
+# Print the test result
+print(t_test_result)
+```
+
+
+```{r}
+# Assuming you have data frames 'average_successM' and 'average_successF' already calculated
+
+# Calculate the standard error for male and female average success rates
+stderr_M <- sd(average_successM$Average_Success, na.rm = TRUE) / sqrt(length(average_successM$Average_Success))
+stderr_F <- sd(average_successF$Average_Success, na.rm = TRUE) / sqrt(length(average_successF$Average_Success))
+
+# Calculate the t-values based on the desired confidence level (e.g., 95% confidence interval)
+confidence_level <- 0.95
+alpha <- 1 - confidence_level
+df_M <- length(average_successM$Average_Success) - 1
+df_F <- length(average_successF$Average_Success) - 1
+t_value_M <- qt(1 - alpha / 2, df_M)
+t_value_F <- qt(1 - alpha / 2, df_F)
+
+# Calculate the margin of error for male and female average success rates
+margin_error_M <- t_value_M * stderr_M
+margin_error_F <- t_value_F * stderr_F
+
+# Calculate the confidence intervals
+CI_M <- c(Maverage - margin_error_M, Maverage + margin_error_M)
+CI_M
+CI_F <- c(Faverage - margin_error_F, Faverage + margin_error_F)
+CI_F
+
+# Display the confidence intervals
+print(paste("Confidence Interval for Male Average Success Rate:", CI_M))
+print(paste("Confidence Interval for Female Average Success Rate:", CI_F))
+
+# Assuming you've already calculated CI_M and CI_F as confidence intervals for male and female average success rates
+
+# Data frame for average success rates and sex
+average_df <- data.frame(
+  Sex = factor(c("Male", "Female"), levels = c("Male", "Female")),
+  Average_Success = c(Maverage, Faverage),
+  CI_lower = c(CI_M[1], CI_F[1]),
+  CI_upper = c(CI_M[2], CI_F[2])
+)
+
+# Plotting the bar plot with error bars for confidence intervals
+ggplot(average_df, aes(x = Sex, y = Average_Success, fill = Sex)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_errorbar(aes(ymin = CI_lower, ymax = CI_upper), 
+                position = position_dodge(width = 0.9), 
+                width = 0.2) +
+  labs(title = "Average Success Rate by Sex",
+       x = "Sex",
+       y = "Average Success Rate") +
+  theme_minimal()
+
+# Saved this plot to Nolan's desktop as Male Female % success
+```
+
