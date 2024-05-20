@@ -1,0 +1,330 @@
+---
+title: "Individual V Social Info Use Notebook 04.18.24"
+output: html_notebook
+author: "Brandi Christiano"
+editor_options:
+  chunk_output_type: console
+---
+```{r}
+# Updated April 18, 2024 on Nolan's desktop
+# updated the "alternative" options of all the binominal tests
+# Break each test up by sex and do binominal tests on those
+```
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(binom)
+```
+
+```{r}
+setwd("C:/Users/15707/OneDrive/Desktop/Social Learning Paper")
+sucDf1 <- read.csv("successdf1.csv")
+sucDf1
+```
+
+```{r}
+indiv<-subset(sucDf1,Test== "individual")
+indiv
+indiv_cleaned <- na.omit(indiv)
+indiv_cleaned
+
+
+social<-subset(sucDf1,Test== "social")
+social
+social_cleaned <- na.omit(social)
+social_cleaned
+
+choice<-subset(sucDf1,Test== "choice")
+choice
+choice_cleaned <- na.omit(choice)
+choice_cleaned
+```
+
+```{r}
+# Individual Test
+
+# Exact binomial test
+successInd<-sum(indiv_cleaned$Success)
+successInd
+resultInd<-binom.test(successInd, length(indiv_cleaned$Success), p=0.5, alternative = "greater")
+resultInd
+
+
+# Individual
+successes_condition1 <- 12
+trials_condition1 <- 17
+
+successes_condition2 <- 5
+trials_condition2 <- 17
+
+# Calculate exact binomial confidence intervals
+ci_condition1 <- binom.test(successes_condition1, trials_condition1)$conf.int
+ci_condition2 <- binom.test(successes_condition2, trials_condition2)$conf.int
+
+# Print confidence intervals
+print(ci_condition1)
+print(ci_condition2)
+```
+
+```{r}
+# Social Test
+successSoc <-sum(social_cleaned$Success)
+successSoc
+resultSoc<-binom.test(successSoc, length(social_cleaned$Success), p=0.5, alternative = "greater")
+resultSoc
+
+successes_condition1 <- 11
+trials_condition1 <- 17
+
+successes_condition2 <- 6
+trials_condition2 <- 17
+
+# Calculate exact binomial confidence intervals
+ci_condition1 <- binom.test(successes_condition1, trials_condition1)$conf.int
+ci_condition2 <- binom.test(successes_condition2, trials_condition2)$conf.int
+
+# Print confidence intervals
+print(ci_condition1)
+print(ci_condition2)
+```
+
+```{r}
+# Choice Test
+successCho <-sum(choice_cleaned$Success)
+successCho
+resultCho<-binom.test(successCho, length(choice_cleaned$Success), p=0.5, alternative = "two.sided") # should this be greater or two.sided?
+resultCho
+
+successes_condition1 <- 12
+trials_condition1 <- 23
+
+successes_condition2 <- 11
+trials_condition2 <- 23
+
+# Calculate exact binomial confidence intervals
+ci_condition1 <- binom.test(successes_condition1, trials_condition1)$conf.int
+ci_condition2 <- binom.test(successes_condition2, trials_condition2)$conf.int
+
+# Print confidence intervals
+print(ci_condition1)
+print(ci_condition2)
+```
+
+
+```{r}
+# When I pool the Individual and Demonstrator test successes, are they choosing FAMILIAR information more than non-familiar information more?
+
+sucDf2 <- read.csv("Success2.csv")
+sucDf2
+df2cleaned <- na.omit(sucDf2)
+df2cleaned
+
+success<-sum(df2cleaned$Success)
+success
+result<-binom.test(success, length(df2cleaned$Success), p=0.5, alternative = "greater")
+result # p = 0.029
+
+ggplot(data = df2cleaned, aes(x = Success, fill = Success)) +
+  geom_bar() +
+  scale_fill_manual(values = c("#01665e", "#d8b365")) +
+  labs(title = "Bat's Flavor Choice", x = "Flavor", y = "Count") +
+  theme_bw() +
+  guides(fill = "none") +
+   ylim(0, 30) +
+  scale_y_continuous(breaks = seq(0, 30, by = 1))
+
+successes_condition1 <- 23
+trials_condition1 <- 34
+
+successes_condition2 <- 11
+trials_condition2 <- 34
+
+# Calculate exact binomial confidence intervals
+ci_condition1 <- binom.test(successes_condition1, trials_condition1)$conf.int
+ci_condition2 <- binom.test(successes_condition2, trials_condition2)$conf.int
+
+# Print confidence intervals
+print(ci_condition1)
+print(ci_condition2)
+
+
+# ---  Break it up by sex ---
+
+male.suc <- 14
+male.fail <- 4
+male.result <-binom.test(14, 18, p=0.5, alternative = "greater")
+male.result
+
+successes_condition1 <- 14
+trials_condition1 <- 18
+
+successes_condition2 <- 4
+trials_condition2 <- 18
+
+# Calculate exact binomial confidence intervals
+ci_condition1 <- binom.test(successes_condition1, trials_condition1)$conf.int
+ci_condition2 <- binom.test(successes_condition2, trials_condition2)$conf.int
+
+# Print confidence intervals
+print(ci_condition1)
+print(ci_condition2)
+
+
+female.suc <- 9
+female.fail <- 7
+female.result <-binom.test(9, 16, p=0.5, alternative = "greater")
+female.result
+
+successes_condition1 <- 9
+trials_condition1 <- 16
+
+successes_condition2 <- 7
+trials_condition2 <- 16
+
+# Calculate exact binomial confidence intervals
+ci_condition1 <- binom.test(successes_condition1, trials_condition1)$conf.int
+ci_condition2 <- binom.test(successes_condition2, trials_condition2)$conf.int
+
+# Print confidence intervals
+print(ci_condition1)
+print(ci_condition2)
+```
+
+
+```{r}
+# April 18, 2024 update 
+# I need to run binomials on each sex for each test type 
+# The data frame I have in this notebook already doesn't have the sex of the bats in there so I am just going to make new data frame with it 
+
+# ---- Individual Test ----
+# Males
+I.male.suc <- 9
+I.male.fail <- 2
+I.male.result <-binom.test(9, 11, p=0.5, alternative = "greater")
+I.male.result
+
+successes_condition1 <- 9
+trials_condition1 <- 11
+
+successes_condition2 <- 2
+trials_condition2 <- 11
+
+# Calculate exact binomial confidence intervals
+ci_condition1 <- binom.test(successes_condition1, trials_condition1)$conf.int
+ci_condition2 <- binom.test(successes_condition2, trials_condition2)$conf.int
+
+# Print confidence intervals
+print(ci_condition1)
+print(ci_condition2)
+
+# Females
+I.female.suc <- 3
+I.female.fail <- 3
+I.female.result <-binom.test(3, 6, p=0.5, alternative = "greater")
+I.female.result
+
+successes_condition1 <- 3
+trials_condition1 <- 6
+
+successes_condition2 <- 3
+trials_condition2 <- 6
+
+# Calculate exact binomial confidence intervals
+ci_condition1 <- binom.test(successes_condition1, trials_condition1)$conf.int
+ci_condition2 <- binom.test(successes_condition2, trials_condition2)$conf.int
+
+# Print confidence intervals
+print(ci_condition1)
+print(ci_condition2)
+```
+
+```{r}
+# ---- Social (aka demonstrator) Test ----
+# Males
+S.male.suc <- 6
+S.male.fail <- 5
+S.male.result <-binom.test(6, 11, p=0.5, alternative = "greater")
+S.male.result
+
+successes_condition1 <- 6
+trials_condition1 <- 11
+
+successes_condition2 <- 5
+trials_condition2 <- 11
+
+# Calculate exact binomial confidence intervals
+ci_condition1 <- binom.test(successes_condition1, trials_condition1)$conf.int
+ci_condition2 <- binom.test(successes_condition2, trials_condition2)$conf.int
+
+# Print confidence intervals
+print(ci_condition1)
+print(ci_condition2)
+
+# Females
+S.female.suc <- 5
+S.female.fail <- 1
+S.female.result <-binom.test(5, 6, p=0.5, alternative = "greater")
+S.female.result
+
+successes_condition1 <- 5
+trials_condition1 <- 6
+
+successes_condition2 <- 1
+trials_condition2 <- 6
+
+# Calculate exact binomial confidence intervals
+ci_condition1 <- binom.test(successes_condition1, trials_condition1)$conf.int
+ci_condition2 <- binom.test(successes_condition2, trials_condition2)$conf.int
+
+# Print confidence intervals
+print(ci_condition1)
+print(ci_condition2)
+
+```
+
+```{r}
+# ---- Conflicting Information Test ----
+# Males
+C.male.suc <- 7
+C.male.fail <- 6
+C.male.result <-binom.test(7, 13, p=0.5, alternative = "greater")
+C.male.result
+
+successes_condition1 <- 7
+trials_condition1 <- 13
+
+successes_condition2 <- 6
+trials_condition2 <- 13
+
+# Calculate exact binomial confidence intervals
+ci_condition1 <- binom.test(successes_condition1, trials_condition1)$conf.int
+ci_condition2 <- binom.test(successes_condition2, trials_condition2)$conf.int
+
+# Print confidence intervals
+print(ci_condition1)
+print(ci_condition2)
+
+# Females
+C.female.suc <- 4
+C.female.fail <- 6
+C.female.result <-binom.test(4, 10, p=0.5, alternative = "less")
+C.female.result
+
+successes_condition1 <- 4
+trials_condition1 <- 10
+
+successes_condition2 <- 6
+trials_condition2 <- 10
+
+# Calculate exact binomial confidence intervals
+ci_condition1 <- binom.test(successes_condition1, trials_condition1)$conf.int
+ci_condition2 <- binom.test(successes_condition2, trials_condition2)$conf.int
+
+# Print confidence intervals
+print(ci_condition1) # 0.12=12%  ... 12% * 10 = 1.2 ... 74% * 10 = 7.4 ... CIs on figure are 1.2-7.4 
+print(ci_condition2)
+```
+
+
+
