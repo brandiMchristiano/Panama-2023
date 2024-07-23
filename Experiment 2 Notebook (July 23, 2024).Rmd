@@ -1,0 +1,72 @@
+---
+title: "Experiment 2 Notebook (July 23, 2024)"
+output: html_notebook
+author: "Brandi Christiano"
+---
+
+```{r}
+# Updated: July 23, 2024
+
+# This notebook contains the code used for the manuscript submission on July 23, 2024 to Animal Behaviour 
+```
+
+```{r}
+# Load libraries
+library(dplyr)
+library(lme4)
+```
+
+```{r}
+setwd("C:/Users/15707/Desktop/Research/Manuscripts/Social Learning Paper/Submission")
+E2data <- read.csv("Exp2data.csv")
+E2data
+```
+```{r}
+# --- Binomial Tests ---
+E2data_cleaned <- na.omit(E2data)
+E2data_cleaned
+
+group.outcome<-sum(E2data_cleaned$Outcome)
+group.outcome
+group.result<-binom.test(group.outcome, length(E2data_cleaned$Outcome), p=0.5, alternative = "less")
+group.result
+
+successes_condition1 <- 11
+trials_condition1 <- 14
+
+successes_condition2 <- 3
+trials_condition2 <- 14
+ci_condition1 <- binom.test(successes_condition1, trials_condition1)$conf.int
+ci_condition2 <- binom.test(successes_condition2, trials_condition2)$conf.int
+print(ci_condition1)
+print(ci_condition2)
+
+# -- By Sex -- 
+# - Male - 
+male_data <- E2data_cleaned %>%
+  filter(Sex == "M")
+
+male.outcome1<-sum(male_data$Outcome)
+male.outcome1
+male.result<-binom.test(male.outcome1, length(male_data$Outcome), p=0.5, alternative = "less")
+male.result
+# - Female - 
+female_data <- E2data_cleaned %>%
+  filter(Sex == "F")
+female.outcome<-sum(female_data$Outcome)
+female.outcome
+female.result<-binom.test(female.outcome, length(female_data$Outcome), p=0.5, alternative = "less")
+female.result
+
+
+# --- GLMM ---
+E2data_cleaned
+summary(E2data_cleaned)
+outcome2<-as.factor(E2data_cleaned$Outcome)
+E2data_cleaned$Sex <- as.factor(E2data_cleaned$Sex)
+
+model1 <- glmer(outcome2 ~ Sex  + (1|Bat_Name), data = E2data_cleaned, family=binomial)
+summary(model1) 
+anova(model1)
+```
+
