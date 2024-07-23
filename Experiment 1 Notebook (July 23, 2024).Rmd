@@ -1,0 +1,259 @@
+---
+title: "Experiment 1 Notebook (July 23, 2024)"
+output: html_notebook
+author: "Brandi Christiano"
+---
+
+```{r}
+# Updated: July 23, 2024
+
+# This notebook contains the code used for the manuscript submission on July 23, 2024 to Animal Behaviour 
+```
+
+```{r}
+# Load Libraries
+library(ggplot2)
+```
+
+```{r}
+setwd("C:/Users/15707/Desktop/Research/Manuscripts/Social Learning Paper/Submission/Data and Code")
+E1data <- read.csv("Exp1data.csv") 
+E1data
+# In the Personal and Demonstrator Tests, an outcome of 0 means they chose the unfamiliar option they had no prior experience with. An outcome of 1 means they chose the flavor that they had experience with
+# In the Conflicting Information Tests, an outcome of 0 means they chose the personal flavor and an outcome of 1 means they chose the demonstrator flavor 
+```
+
+```{r}
+# --- EXPERIMENT 1 - Personal and Social Information Use ---
+
+# -- Sort by test type and clean --
+personal<-subset(E1data,Test== "personal")
+personal
+personal_cleaned <- na.omit(personal)
+personal_cleaned
+
+demonstrator<-subset(E1data,Test== "demonstrator")
+demonstrator
+demonstrator_cleaned <- na.omit(demonstrator)
+demonstrator_cleaned
+
+conflicting<-subset(E1data,Test== "conflicting")
+conflicting
+conflicting_cleaned <- na.omit(conflicting)
+conflicting_cleaned
+
+
+# -- Personal Information Test --
+
+# - Exact binomial test -
+outcomePersonal<-sum(personal_cleaned$Outcome)
+outcomePersonal
+resultPersonal <-binom.test(outcomePersonal, length(personal_cleaned$Outcome), p=0.5, alternative = "greater")
+resultPersonal
+
+successes_condition1 <- 12
+trials_condition1 <- 17
+successes_condition2 <- 5
+trials_condition2 <- 17
+
+# - Calculate exact binomial confidence intervals -
+ci_condition1 <- binom.test(successes_condition1, trials_condition1)$conf.int
+ci_condition2 <- binom.test(successes_condition2, trials_condition2)$conf.int
+print(ci_condition1)
+print(ci_condition2)
+
+# -- By Sex -- 
+# - Males -
+personal.male.outcome1<- 9
+personal.male.outcome0 <- 2
+personal.male.result <-binom.test(9, 11, p=0.5, alternative = "greater")
+personal.male.result
+
+successes_condition1 <- 9
+trials_condition1 <- 11
+successes_condition2 <- 2
+trials_condition2 <- 11
+ci_condition1 <- binom.test(successes_condition1, trials_condition1)$conf.int
+ci_condition2 <- binom.test(successes_condition2, trials_condition2)$conf.int
+print(ci_condition1)
+print(ci_condition2)
+
+# - Females -
+personal.female.outcome1 <- 3
+personal.female.outcome0 <- 3
+personal.female.result <-binom.test(3, 6, p=0.5, alternative = "greater")
+personal.female.result
+
+successes_condition1 <- 3
+trials_condition1 <- 6
+successes_condition2 <- 3
+trials_condition2 <- 6
+ci_condition1 <- binom.test(successes_condition1, trials_condition1)$conf.int
+ci_condition2 <- binom.test(successes_condition2, trials_condition2)$conf.int
+print(ci_condition1)
+print(ci_condition2)
+
+
+# -- Demonstrator Information Test --
+outcomeDemonstrator <-sum(demonstrator_cleaned$Outcome)
+outcomeDemonstrator
+resultDemonstrator<-binom.test(outcomeDemonstrator, length(demonstrator_cleaned$Outcome), p=0.5, alternative = "greater")
+resultDemonstrator
+
+successes_condition1 <- 11
+trials_condition1 <- 17
+successes_condition2 <- 6
+trials_condition2 <- 17
+
+# - Calculate exact binomial confidence intervals -
+ci_condition1 <- binom.test(successes_condition1, trials_condition1)$conf.int
+ci_condition2 <- binom.test(successes_condition2, trials_condition2)$conf.int
+print(ci_condition1)
+print(ci_condition2)
+
+# -- By Sex -- 
+# - Males -
+demonstrator.male.outcome1 <- 6
+demonstrator.male.outcome0 <- 5
+demonstrator.male.result <-binom.test(6, 11, p=0.5, alternative = "greater")
+demonstrator.male.result
+
+successes_condition1 <- 6
+trials_condition1 <- 11
+successes_condition2 <- 5
+trials_condition2 <- 11
+ci_condition1 <- binom.test(successes_condition1, trials_condition1)$conf.int
+ci_condition2 <- binom.test(successes_condition2, trials_condition2)$conf.int
+print(ci_condition1)
+print(ci_condition2)
+
+# - Females -
+demonstrator.female.outcome1 <- 5
+demonstrator.female.outcome0 <- 1
+demonstrator.female.result <-binom.test(5, 6, p=0.5, alternative = "greater")
+demonstrator.female.result
+
+successes_condition1 <- 5
+trials_condition1 <- 6
+successes_condition2 <- 1
+trials_condition2 <- 6
+ci_condition1 <- binom.test(successes_condition1, trials_condition1)$conf.int
+ci_condition2 <- binom.test(successes_condition2, trials_condition2)$conf.int
+print(ci_condition1)
+print(ci_condition2)
+
+# -- Conflicting Information Test--
+outcomeConflicting <-sum(conflicting_cleaned$Outcome)
+outcomeConflicting
+resultConflicting<-binom.test(outcomeConflicting, length(conflicting_cleaned$Outcome), p=0.5, alternative = "two.sided")
+resultConflicting
+
+successes_condition1 <- 12
+trials_condition1 <- 23
+successes_condition2 <- 11
+trials_condition2 <- 23
+
+# - Calculate exact binomial confidence intervals -
+ci_condition1 <- binom.test(successes_condition1, trials_condition1)$conf.int
+ci_condition2 <- binom.test(successes_condition2, trials_condition2)$conf.int
+print(ci_condition1)
+print(ci_condition2)
+
+# -- By Sex -- 
+# - Males -
+conflicting.male.outcome1 <- 7
+conflicting.male.outcome0 <- 6
+conflicting.male.result <-binom.test(7, 13, p=0.5, alternative = "greater")
+conflicting.male.result
+
+successes_condition1 <- 7
+trials_condition1 <- 13
+successes_condition2 <- 6
+trials_condition2 <- 13
+ci_condition1 <- binom.test(successes_condition1, trials_condition1)$conf.int
+ci_condition2 <- binom.test(successes_condition2, trials_condition2)$conf.int
+print(ci_condition1)
+print(ci_condition2)
+
+# - Females - 
+conflicting.female.outcome1 <- 4
+conflicting.female.outcome0 <- 6
+conflicting.female.result <-binom.test(4, 10, p=0.5, alternative = "less")
+conflicting.female.result
+
+successes_condition1 <- 4
+trials_condition1 <- 10
+successes_condition2 <- 6
+trials_condition2 <- 10
+ci_condition1 <- binom.test(successes_condition1, trials_condition1)$conf.int
+ci_condition2 <- binom.test(successes_condition2, trials_condition2)$conf.int
+print(ci_condition1) # 0.12=12%  ... 12% * 10 = 1.2 ... 74% * 10 = 7.4 ... CIs on figure are 1.2-7.4 
+print(ci_condition2)
+```
+
+```{r}
+# --- EXPERIMENT 1 PART 2 - Familiar v Unfamiliar Information Use ---
+# Pool the Personal and Demonstrator Tests outcomes - are they choosing FAMILIAR information or unfamiliar information more?
+
+E1data2 <- read.csv("Exp1dataFamiliar.csv")
+E1data2
+E1data2_cleaned <- na.omit(E1data2)
+E1data2_cleaned
+
+outcomeFamiliar<-sum(E1data2_cleaned$Outcome)
+outcomeFamiliar
+resultFamiliar<-binom.test(outcomeFamiliar, length(E1data2_cleaned$Outcome), p=0.5, alternative = "greater")
+resultFamiliar 
+
+successes_condition1 <- 23
+trials_condition1 <- 34
+successes_condition2 <- 11
+trials_condition2 <- 34
+# - Calculate exact binomial confidence intervals -
+ci_condition1 <- binom.test(successes_condition1, trials_condition1)$conf.int
+ci_condition2 <- binom.test(successes_condition2, trials_condition2)$conf.int
+print(ci_condition1)
+print(ci_condition2)
+
+# - Figure 4 - 
+ggplot(data = E1data2_cleaned, aes(x = Outcome, fill = Outcome)) +
+  geom_bar() +
+  scale_fill_manual(values = c("#01665e", "#d8b365")) +
+  labs(title = "Bat's Flavour Choice", x = "Flavour", y = "Count") +
+  theme_bw() +
+  guides(fill = "none") +
+   ylim(0, 30) +
+  scale_y_continuous(breaks = seq(0, 30, by = 1))
+
+# -- By Sex --
+# - Male - 
+familiar.male.outcome1 <- 14
+familiar.male.outcome0 <- 4
+familiar.male.result <-binom.test(14, 18, p=0.5, alternative = "greater")
+familiar.male.result
+
+successes_condition1 <- 14
+trials_condition1 <- 18
+successes_condition2 <- 4
+trials_condition2 <- 18
+ci_condition1 <- binom.test(successes_condition1, trials_condition1)$conf.int
+ci_condition2 <- binom.test(successes_condition2, trials_condition2)$conf.int
+print(ci_condition1)
+print(ci_condition2)
+
+# - Female -
+familiar.female.outcome1 <- 9
+familiar.female.outcome0 <- 7
+familiar.female.result <-binom.test(9, 16, p=0.5, alternative = "greater")
+familiar.female.result
+
+successes_condition1 <- 9
+trials_condition1 <- 16
+successes_condition2 <- 7
+trials_condition2 <- 16
+ci_condition1 <- binom.test(successes_condition1, trials_condition1)$conf.int
+ci_condition2 <- binom.test(successes_condition2, trials_condition2)$conf.int
+print(ci_condition1)
+print(ci_condition2)
+```
+
